@@ -16,16 +16,30 @@ const getCategory = async (req, res) => {
   `
 
   try {
-    const response = await openai.chat.completions.create({
-      model: 'gpt-4.1',
-      messages: [
-        { role: 'system', content: system_message },
+    const response = await openai.responses.create({
+      model: 'gpt-5.1',
+      input: [
+        { role: 'developer', content: system_message },
         { role: 'user', content: data }
       ],
-      temperature: 0,
+      text: {
+        "format": {
+          "type": "text"
+        },
+        "verbosity": "low"
+      },
+      reasoning: {
+        "effort": "none"
+      },
+      tools: [],
+      store: false,
+      // include: [
+      //   "reasoning.encrypted_content",
+      //   "web_search_call.action.sources"
+      // ]
     })
 
-    res.json(response.choices[0].message.content);
+    res.json(response.output_text);
   } catch (error) {
     res
       .status(500)
@@ -54,15 +68,26 @@ const getNote = async (req, res) => {
   `
 
   try {
-    const response = await openai.chat.completions.create({
-      model: 'gpt-4.1',
-      messages: [
-        { role: 'system', content: system_message },
+    const response = await openai.responses.create({
+      model: 'gpt-5.1',
+      input: [
+        { role: 'developer', content: system_message },
         { role: 'user', content: data }
       ],
+      text: {
+        "format": {
+          "type": "text"
+        },
+        "verbosity": "low"
+      },
+      reasoning: {
+        "effort": "none"
+      },
+      tools: [],
+      store: false
     })
 
-    res.json(response.choices[0].message.content);
+    res.json(response.output_text);
   } catch (error) {
     res
       .status(500)
@@ -85,24 +110,19 @@ const getSearchRate = async (req, res) => {
   `
 
   try {
-    const response = await openai.responses.create({
-      model: "gpt-4.1",
-      input: [
-        { role: 'system', content: system_message },
+    const response = await openai.chat.completions.create({
+      model: "gpt-5-search-api",
+      messages: [
+        { role: 'developer', content: system_message },
         { role: 'user', content: data }
       ],
-      tools: [
-        {
-          type: 'web_search_preview',
-          user_location: {
-            type: 'approximate'
-          },
-          search_context_size: 'low'
-        }
-      ],
+      response_format: {
+        "type": "text"
+      },
+      store: false
     })
 
-    res.json(response.output_text);
+    res.json(response.choices[0].message.content);
   } catch (error) {
     res
       .status(500)
@@ -228,13 +248,15 @@ const getSearchCompany = async (req, res) => {
           "strict": true
         },
         {
-          type: 'web_search_preview',
+          type: 'web_search',
           user_location: {
-            type: 'approximate'
+            type: 'approximate',
+            country: 'US'
           },
-          search_context_size: 'high'
+          search_context_size: 'medium'
         }
       ],
+      include: ["web_search_call.action.sources"]
     })
 
     res.json(response?.output[2].arguments);
