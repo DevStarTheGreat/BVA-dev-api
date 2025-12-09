@@ -49,4 +49,17 @@ const createOrEditProject = async (req, res) => {
     }
 }
 
-module.exports = { getProjectList, getProjectData, createOrEditProject };
+const deleteProject = async (req, res) => {
+    try {
+        const { projectId } = req.query;
+        await Projects.deleteById(projectId);
+        res.sendStatus(204);
+        
+        console.log(`Project ${projectId} successfully deleted.`);
+    } catch (error) {
+        console.error(`Error deleting project:`, error);
+    }
+}
+
+
+module.exports = { getProjectList, getProjectData, createOrEditProject, deleteProject };
