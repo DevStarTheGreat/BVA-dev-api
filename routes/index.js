@@ -47,6 +47,7 @@ router.post("/company-link", company.verifyLink);     //from global
 router.get("/projects", verifyToken, projects.getProjectList);
 router.get("/project", verifyToken, projects.getProjectData);
 router.post("/project", verifyToken, projects.createOrEditProject);
+router.delete("/project", verifyToken, projects.deleteProject);
 
 // Subscription routes
 router.post("/subscriptions-session", subscriptions.createSubscriptionSession);
