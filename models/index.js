@@ -215,6 +215,11 @@ class Projects {
     return doc.exists ? doc.data() : null;
   }
 
+  static async deleteById(projectId) {
+    const projectRef = db.collection("projects").doc(projectId);
+    await projectRef.delete();
+  }
+
   static async getProjectInfoByUserCompanyId(userId, companyId) {
     const projectRef = db.collection("projects");
     const snapshot = await projectRef
